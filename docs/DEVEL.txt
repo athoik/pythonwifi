@@ -79,7 +79,7 @@ Iwstruct):
     First, we build a buffer with a buffersize of 32
     byte:
         
-        buff = array.array('c', '\0'*buffsize)
+        buff = array.array('B', b'\0'*buffsize)
     
     Then, the system call needs the address of this buffer and the
     length, which can be optained by a method on the buffer. 
