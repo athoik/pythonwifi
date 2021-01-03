@@ -1573,7 +1573,6 @@ class Iwscanresult(object):
                 self.protocol = data_string[:len(data_string)-2]
             elif cmd == pythonwifi.flags.SIOCGIWESSID:
                 self.essid = data_string[12:]
-                a = 4
             elif cmd == pythonwifi.flags.SIOCGIWENCODE:
                 data = struct.unpack("B"*len(data_string), data)
                 self.encode = Iwpoint(b'')
