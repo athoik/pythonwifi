@@ -46,7 +46,8 @@ for ap in scan.aplist:
     print("                    Mode:%s" % (ap.mode, ))
     print("                    Frequency:%s (Channel %d)" % \
         (wifi._formatFrequency(ap.frequency.getFrequency()),
-        frequencies.index(wifi._formatFrequency(getWirelessName
+        frequencies.index(wifi._formatFrequency(
+            ap.frequency.getFrequency())) + 1))
     if (ap.quality.updated & \
                 pythonwifi.flags.IW_QUAL_QUAL_UPDATED):
         quality_updated = "="
