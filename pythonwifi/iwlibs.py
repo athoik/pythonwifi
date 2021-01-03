@@ -307,7 +307,7 @@ class Wireless(object):
         if len(essid) > pythonwifi.flags.IW_ESSID_MAX_SIZE:
             raise OverflowError(errno.EOVERFLOW, os.strerror(errno.EOVERFLOW))
         if (sys.version_info[0] == 3):
-            essid = bytes(essid,'latin-1')
+            essid = bytes(essid,'unicode-escape')
         iwpoint = Iwpoint(essid, 1)
         status, result = self.iwstruct.iw_set_ext(self.ifname,
                                              pythonwifi.flags.SIOCSIWESSID,
@@ -429,7 +429,7 @@ class Wireless(object):
             cooked_key = map(chr, raw_key)
 
         if (sys.version_info[0] == 3):
-            cooked_key = bytes(cooked_key, 'latin-1')
+            cooked_key = bytes(cooked_key, 'unicode-escape')
 
         iwpoint = Iwpoint(cooked_key,
                     index + pythonwifi.flags.IW_ENCODE_ENABLED)
@@ -738,7 +738,12 @@ class WirelessConfig(object):
         """
         status, result = self.iwstruct.iw_get_ext(self.ifname,
                                              pythonwifi.flags.SIOCGIWNAME)
-        return result.tostring().strip('\x00')
+
+        result = result.tostring().strip(b'\x00')
+        if (sys.version_info[0] == 2):
+            return result
+        else:
+            return result.decode("unicode-escape")
 
     def getEncryption(self):
         """ Returns the encryption status.
@@ -815,7 +820,7 @@ class WirelessConfig(object):
         if (sys.version_info[0] == 2):
             return result
         else:
-            return result.decode("latin-1")
+            return result.decode("unicode-escape")
 
     def getMode(self):
         """ Returns currently set operation mode.
@@ -1033,7 +1038,7 @@ class Iwstruct(object):
         if (sys.version_info[0] == 2):
             buff = array.array('c', string+'\0'*buffsize)
         else:
-            var_bytes = bytes(string, 'latin-1')        
+            var_bytes = bytes(string, 'unicode-escape')        
             buff = array.array('B', var_bytes + b'\0'*buff)
         caddr_t, length = buff.buffer_info()
         s = struct.pack('PHH', caddr_t, length, 1)
@@ -1052,7 +1057,7 @@ class Iwstruct(object):
         if (sys.version_info[0] == 2):            
             ifreq = array.array('c', ifname + '\0'*buff)
         else:
-            var_bytes = bytes(ifname, 'latin-1')        
+            var_bytes = bytes(ifname, 'unicode-escape')        
             ifreq = array.array('B', var_bytes + b'\0'*buff)
         # put some additional data behind the interface name
         if data is not None:
@@ -1564,7 +1569,7 @@ class Iwscanresult(object):
         data_string = data
         if (sys.version_info[0] == 3):
             # convert byte to string
-            data_string = data.decode("latin-1")
+            data_string = data.decode("unicode-escape")
         if ((cmd in range(pythonwifi.flags.SIOCIWFIRST,
                           pythonwifi.flags.SIOCIWLAST+1)) or
             (cmd in range(pythonwifi.flags.IWEVFIRST,
