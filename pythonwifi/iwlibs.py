@@ -24,6 +24,7 @@
 from __future__ import print_function
 from __future__ import division
 
+import ctypes
 import struct
 import array
 import math
@@ -1507,14 +1508,20 @@ class Iwscan(object):
             if cmd == pythonwifi.flags.SIOCGIWAP:
                 if scanresult:
                     aplist.append(scanresult)
+                if ctypes.sizeof(ctypes.c_voidp) == 4:
+                    # we are on a 32bit system
+                    fix_IW_EV_LCP_PK_LEN = pythonwifi.flags.IW_EV_LCP_PK_LEN
+                else:
+                    # we are on a 64bit system
+                    fix_IW_EV_LCP_PK_LEN = pythonwifi.flags.IW_EV_LCP_PK_LEN + 4
                 scanresult = Iwscanresult(
-                        data[pythonwifi.flags.IW_EV_LCP_PK_LEN:length],
+                        data[fix_IW_EV_LCP_PK_LEN:length],
                         self.range)
             elif scanresult is None:
                 raise RuntimeError("Attempting to add an event without AP data.")
             else:
                 scanresult.addEvent(cmd,
-                        data[pythonwifi.flags.IW_EV_LCP_PK_LEN:length])
+                        data[fix_IW_EV_LCP_PK_LEN:length])
             # We're finished with the previous event
             data = data[length:]
 
@@ -1572,7 +1579,7 @@ class Iwscanresult(object):
             elif cmd == pythonwifi.flags.SIOCGIWNAME:
                 self.protocol = data_string[:len(data_string)-2]
             elif cmd == pythonwifi.flags.SIOCGIWESSID:
-                self.essid = data_string[12:]
+                self.essid = data_string[4:]
             elif cmd == pythonwifi.flags.SIOCGIWENCODE:
                 data = struct.unpack("B"*len(data_string), data)
                 self.encode = Iwpoint(b'')
