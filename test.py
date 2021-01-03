@@ -12,7 +12,31 @@ wifi = Wireless('wlp59s0')
 print(wifi.getEssid())
 print(wifi.getMode())
 
+keys = wifi.getKeys()
+
+print(wifi.getPowermanagement())
+print(wifi.getQualityAvg())
+print(wifi.getWirelessName())
+print(wifi.getAPaddr())
+print(wifi.getBitrate())
+print(wifi.getChannelInfo())
+print(wifi.getEncryption())
+print(wifi.getFragmentation())
+print(wifi.getFrequency())
+print(wifi.getQualityMax())
+print(wifi.getRetrylimit())
+print(wifi.getRTS())
+#print(wifi.getSensitivity())
+print(wifi.getStatistics())
+print(wifi.getTXPower())
+print(wifi.getWirelessName())
+
+
+for key in keys:
+    print(key)
+
 scan = wifi.scan()
+
 a = 4
 (num_channels, frequencies) = wifi.getChannelInfo()
 index = 1
