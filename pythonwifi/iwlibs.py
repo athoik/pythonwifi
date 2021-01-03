@@ -22,6 +22,7 @@
 #    USA
 
 from __future__ import print_function
+from __future__ import division
 
 import struct
 import array
@@ -305,7 +306,7 @@ class Wireless(object):
         if len(essid) > pythonwifi.flags.IW_ESSID_MAX_SIZE:
             raise OverflowError(errno.EOVERFLOW, os.strerror(errno.EOVERFLOW))
         if (sys.version_info[0] == 3):
-            essid = bytes(essid,'utf-8')        
+            essid = bytes(essid,'latin-1')
         iwpoint = Iwpoint(essid, 1)
         status, result = self.iwstruct.iw_set_ext(self.ifname,
                                              pythonwifi.flags.SIOCSIWESSID,
@@ -427,7 +428,7 @@ class Wireless(object):
             cooked_key = map(chr, raw_key)
 
         if (sys.version_info[0] == 3):
-            cooked_key = bytes(cooked_key, 'utf-8')
+            cooked_key = bytes(cooked_key, 'latin-1')
 
         iwpoint = Iwpoint(cooked_key,
                     index + pythonwifi.flags.IW_ENCODE_ENABLED)
@@ -514,7 +515,7 @@ class Wireless(object):
             if unit == "k": freq_num = freq_num * KILO
             e = int(math.floor(math.log10(freq_num)))
             if e > 8:
-                m = int(math.floor(freq_num / math.pow(10, e - 6))) * 100
+                m = int(math.floor(freq_num // math.pow(10, e - 6))) * 100
                 e = e - 8
             else:
                 m = int(freq_num)
@@ -813,7 +814,7 @@ class WirelessConfig(object):
         if (sys.version_info[0] == 2):
             return result
         else:
-            return result.decode("utf-8")
+            return result.decode("latin-1")
 
     def getMode(self):
         """ Returns currently set operation mode.
@@ -1031,7 +1032,7 @@ class Iwstruct(object):
         if (sys.version_info[0] == 2):
             buff = array.array('c', string+'\0'*buffsize)
         else:
-            var_bytes = bytes(string, 'utf-8')        
+            var_bytes = bytes(string, 'latin-1')        
             buff = array.array('B', var_bytes + b'\0'*buff)
         caddr_t, length = buff.buffer_info()
         s = struct.pack('PHH', caddr_t, length, 1)
@@ -1050,7 +1051,7 @@ class Iwstruct(object):
         if (sys.version_info[0] == 2):            
             ifreq = array.array('c', ifname + '\0'*buff)
         else:
-            var_bytes = bytes(ifname, 'utf-8')        
+            var_bytes = bytes(ifname, 'latin-1')        
             ifreq = array.array('B', var_bytes + b'\0'*buff)
         # put some additional data behind the interface name
         if data is not None:
@@ -1141,7 +1142,7 @@ class Iwfreq(object):
             self.e = 3
         else:
             self.e = 0
-        self.m = value / 10**self.e
+        self.m = value // 10**self.e
 
 
 class Iwstats(object):
@@ -1553,6 +1554,10 @@ class Iwscanresult(object):
             If the data is valid but unused, False is returned
 
         """
+        data_string = data
+        if (sys.version_info[0] == 3):
+            # convert byte to string
+            data_string = data.decode("latin-1")
         if ((cmd in range(pythonwifi.flags.SIOCIWFIRST,
                           pythonwifi.flags.SIOCIWLAST+1)) or
             (cmd in range(pythonwifi.flags.IWEVFIRST,
@@ -1565,11 +1570,12 @@ class Iwscanresult(object):
                 raw_mode = struct.unpack('I', data[:4])[0]
                 self.mode = pythonwifi.flags.modes[raw_mode]
             elif cmd == pythonwifi.flags.SIOCGIWNAME:
-                self.protocol = data[:len(data)-2]
+                self.protocol = data_string[:len(data_string)-2]
             elif cmd == pythonwifi.flags.SIOCGIWESSID:
-                self.essid = data[4:]
+                self.essid = data_string[12:]
+                a = 4
             elif cmd == pythonwifi.flags.SIOCGIWENCODE:
-                data = struct.unpack("B"*len(data), data)
+                data = struct.unpack("B"*len(data_string), data)
                 self.encode = Iwpoint(b'')
                 self.encode.update(struct.pack('PHH',
                     (int(data[0])<<16)+int(data[1]), data[2]<<8, data[3]<<8))

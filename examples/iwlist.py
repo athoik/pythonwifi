@@ -20,6 +20,7 @@
 #   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 from __future__ import print_function
+from __future__ import division
 
 import errno
 import sys
@@ -66,7 +67,7 @@ def print_scanning_results(wifi, args=None):
                 (num_channels, frequencies) = wifi.getChannelInfo()
                 print("%-8.16s  Scan completed :" % (wifi.ifname, ))
                 index = 1
-                for ap in results:
+                for ap in results.aplist:
                     print("          Cell %02d - Address: %s" % (index, ap.bssid))
                     print("                    ESSID:\"%s\"" % (ap.essid, ))
                     print("                    Mode:%s" % (ap.mode, ))
@@ -101,6 +102,7 @@ def print_scanning_results(wifi, args=None):
                         ap.quality.getNoiselevel(),
                         "100"))
                     # This code on encryption keys is very fragile
+                    key_status = ""
                     if (ap.encode.flags & pythonwifi.flags.IW_ENCODE_DISABLED):
                         key_status = "off"
                     else:
@@ -111,7 +113,7 @@ def print_scanning_results(wifi, args=None):
                     if len(ap.rate) > 0:
                         for rate_list in ap.rate:
                             # calc how many full lines of bitrates
-                            rate_lines = len(rate_list) / 5
+                            rate_lines = len(rate_list) // 5
                             # calc how many bitrates on last line
                             rate_remainder = len(rate_list) % 5
                             line = 0
@@ -281,10 +283,10 @@ def format_pm_value(value, args=None):
 
     """
     if (value >= pythonwifi.iwlibs.MEGA):
-        fvalue = "%gs" % (value / pythonwifi.iwlibs.MEGA, )
+        fvalue = "%gs" % (value // pythonwifi.iwlibs.MEGA, )
     else:
         if (value >= pythonwifi.iwlibs.KILO):
-            fvalue = "%gms" % (value / pythonwifi.iwlibs.KILO, )
+            fvalue = "%gms" % (value // pythonwifi.iwlibs.KILO, )
         else:
             fvalue = "%dus" % (value, )
     return fvalue
