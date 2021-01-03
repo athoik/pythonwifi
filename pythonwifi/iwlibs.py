@@ -392,7 +392,7 @@ class Wireless(object):
         iwpoint = self.wireless_info.getKey(key)
 
         # build a list of each char in key
-        raw_key = map(ord, iwpoint.buff.tolist())[:iwpoint.length]
+        raw_key = iwpoint.buff.tolist()[:iwpoint.length]
         if sum(raw_key) == 0:
             return "off"
         if not formatted:
@@ -451,7 +451,7 @@ class Wireless(object):
             [(1, '1234-5678-91'), (2, None), (3, 'ABCD-EFAB-CD'), (4, None)]
 
         """
-        iwrange = Iwrange(self.ifname);
+        iwrange = Iwrange(self.ifname)
         keys = []
         if iwrange.max_encoding_tokens > 0:
             for i in range(1, iwrange.max_encoding_tokens+1):
