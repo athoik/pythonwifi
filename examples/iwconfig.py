@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright 2004, 2005 Róman Joost <roman@bromeco.de> - Rotterdam, Netherlands
+# Copyright 2004, 2005 RÃ³man Joost <roman@bromeco.de> - Rotterdam, Netherlands
 # Copyright 2009 by Sean Robinson <seankrobinson@gmail.com>
 #
 # This file is part of Python WiFi
@@ -30,7 +30,12 @@ def getBitrate(wifi):
     """ Return formatted string with Bit Rate info. """
     try:
         bitrate = wifi.wireless_info.getBitrate()
-    except IOError, (errno, strerror):
+    except IOError as e:
+        if (sys.version_info[0] == 3):
+            errno, strerror = e.args
+        else:
+            errno = e[0]
+            strerror = e[1]
         return None
     else:
         if bitrate.fixed:
@@ -43,7 +48,12 @@ def getTXPower(wifi):
     """ Return formatted string with TXPower info. """
     try:
         txpower = wifi.wireless_info.getTXPower()
-    except IOError, (errno, strerror):
+    except IOError as e:
+        if (sys.version_info[0] == 3):
+            errno, strerror = e.args
+        else:
+            errno = e[0]
+            strerror = e[1]
         return None
     else:
         if txpower.fixed:
@@ -56,7 +66,12 @@ def getSensitivity(wifi):
     """ Return formatted string with Sensitivity info. """
     try:
         sensitivity = wifi.wireless_info.getSensitivity()
-    except IOError, (errno, strerror):
+    except IOError as e:
+        if (sys.version_info[0] == 3):
+            errno, strerror = e.args
+        else:
+            errno = e[0]
+            strerror = e[1]
         return None
     else:
         if sensitivity.fixed:
@@ -71,7 +86,12 @@ def getRetrylimit(wifi):
     """ Return formatted string with Retry info. """
     try:
         retry = wifi.wireless_info.getRetry()
-    except IOError, (errno, strerror):
+    except IOError as e:
+        if (sys.version_info[0] == 3):
+            errno, strerror = e.args
+        else:
+            errno = e[0]
+            strerror = e[1]
         return None
     else:
         modifier = ""
@@ -92,7 +112,12 @@ def getRTS(wifi):
     """ Return formatted string with RTS info. """
     try:
         rts = wifi.wireless_info.getRTS()
-    except IOError, (errno, strerror):
+    except IOError as e:
+        if (sys.version_info[0] == 3):
+            errno, strerror = e.args
+        else:
+            errno = e[0]
+            strerror = e[1]
         return None
     else:
         if rts.disabled:
@@ -107,7 +132,12 @@ def getFragmentation(wifi):
     """ Return formatted string with Fragmentation info. """
     try:
         frag = wifi.wireless_info.getFragmentation()
-    except IOError, (errno, strerror):
+    except IOError as e:
+        if (sys.version_info[0] == 3):
+            errno, strerror = e.args
+        else:
+            errno = e[0]
+            strerror = e[1]
         return None
     else:
         if frag.disabled:
@@ -197,7 +227,12 @@ def iwconfig(interface):
         line = line + "Mode:" + wifi.getMode()
         try:
             line = line + "  Frequency:" + wifi.getFrequency()
-        except IOError, (error_number, error_string):
+        except IOError as e:
+            if (sys.version_info[0] == 3):
+                error_number, error_string = e.args
+            else:
+                error_number = e[0]
+                error_string = e[1]
             # Some drivers do not return frequency info if not associated
             pass
 
@@ -249,7 +284,12 @@ def iwconfig(interface):
 
         try:
             stat, qual, discard, missed_beacon = wifi.getStatistics()
-        except IOError, (error_number, error_string):
+        except IOError as e:
+            if (sys.version_info[0] == 3):
+                error_number, error_string = e.args
+            else:
+                error_number = e[0]
+                error_string = e[1]
             # Some drivers do not return statistics info if not associated
             pass
         else:
@@ -278,7 +318,12 @@ def setEssid(wifi, essid):
     """ Set the ESSID on the NIC. """
     try:
         wifi.setEssid(essid)
-    except OverflowError, (errno, strerror):
+    except OverflowError as e:
+        if (sys.version_info[0] == 3):
+            errno, strerror = e.args
+        else:
+            errno = e[0]
+            strerror = e[1]
         print "Error for wireless request \"Set ESSID\" (%X) :" % \
                 (pythonwifi.flags.SIOCSIWESSID, )
         print "    argument too big (max %d)" % \
