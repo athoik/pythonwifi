@@ -35,6 +35,7 @@ import socket
 import time
 import re
 import sys
+import six
 
 import pythonwifi.flags
 
@@ -1057,7 +1058,7 @@ class Iwstruct(object):
         if (sys.version_info[0] == 2):            
             ifreq = array.array('c', ifname + '\0'*buff)
         else:
-            ifreq = array.array('B', ifname + b'\0'*buff)
+            ifreq = array.array('B', six.ensure_binary(ifname) + b'\0'*buff)
         # put some additional data behind the interface name
         if data is not None:
             ifreq.extend(data)
