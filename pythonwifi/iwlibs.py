@@ -114,7 +114,7 @@ def getConfiguredWNICnames():
     for i in range(0, 1024, 32):
         ifname = buff.tobytes()[i:i+32]
         ifname = struct.unpack('32s', ifname)[0]
-        ifname = ifname.split('\0', 1)[0]
+        ifname = ifname.split(b'\0', 1)[0]
         if ifname:
             # verify if ifnames are really wifi devices
             wifi = Wireless(ifname)
