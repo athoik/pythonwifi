@@ -158,7 +158,7 @@ def getEncryption(wifi):
     #try:
     enc = wifi.wireless_info.getEncryption()
     #except IOError, (errno, strerror):
-        #print errno, strerror
+        #print(errno, strerror)
         #return None
     #else:
     if (enc.flags & pythonwifi.flags.IW_ENCODE_DISABLED):
@@ -214,7 +214,7 @@ def getPowerManagement(wifi):
 def iwconfig(interface):
     """ Get wireless information from the device driver. """
     if interface not in getWNICnames():
-        print "%-8.16s  no wireless extensions." % (interface, )
+        print("%-8.16s  no wireless extensions." % (interface, ))
     else:
         wifi = Wireless(interface)
         line = """%-8.16s  %s  """ % (interface, wifi.getWirelessName())
@@ -244,7 +244,7 @@ def iwconfig(interface):
         if (ap_addr == "00:00:00:00:00:00"):
             ap_addr = "Not-Associated"
         line = line + "  " + ap_type + ": " + ap_addr + "   "
-        print line
+        print(line)
 
         # Bit Rate, TXPower, and Sensitivity line
         line = "          "
@@ -257,7 +257,7 @@ def iwconfig(interface):
         sensitivity = getSensitivity(wifi)
         if sensitivity:
             line = line + sensitivity
-        print line
+        print(line)
 
         # Retry, RTS, and Fragmentation line
         line = "          "
@@ -270,17 +270,17 @@ def iwconfig(interface):
         fragment = getFragmentation(wifi)
         if fragment:
             line = line + fragment
-        print line
+        print(line)
 
         # Encryption line
         line = "          "
         line = line + getEncryption(wifi)
-        print line
+        print(line)
 
         # Power Management line
         line = "          "
         line = line + getPowerManagement(wifi)
-        print line
+        print(line)
 
         try:
             stat, qual, discard, missed_beacon = wifi.getStatistics()
@@ -298,21 +298,21 @@ def iwconfig(interface):
             line = line + "Link Quality:%s/100  " % (qual.quality, )
             line = line + "Signal level:%sdBm  " % (qual.signallevel, )
             line = line + "Noise level:%sdBm" % (qual.noiselevel, )
-            print line
+            print(line)
             # Rx line
             line = "          "
             line = line + "Rx invalid nwid:%s  " % (discard['nwid'], )
             line = line + "Rx invalid crypt:%s  " % (discard['code'], )
             line = line + "Rx invalid frag:%s" % (discard['fragment'], )
-            print line
+            print(line)
             # Tx line
             line = "          "
             line = line + "Tx excessive retries:%s  " % (discard['retries'], )
             line = line + "Invalid misc:%s   " % (discard['misc'], )
             line = line + "Missed beacon:%s" % (missed_beacon, )
-            print line
+            print(line)
 
-    print
+    print()
 
 def setEssid(wifi, essid):
     """ Set the ESSID on the NIC. """
@@ -324,57 +324,57 @@ def setEssid(wifi, essid):
         else:
             errno = e[0]
             strerror = e[1]
-        print "Error for wireless request \"Set ESSID\" (%X) :" % \
-                (pythonwifi.flags.SIOCSIWESSID, )
-        print "    argument too big (max %d)" % \
-                (pythonwifi.flags.IW_ESSID_MAX_SIZE, )
-    except Exception, detail:
+        print("Error for wireless request \"Set ESSID\" (%X) :" % \
+                (pythonwifi.flags.SIOCSIWESSID, ))
+        print("    argument too big (max %d)" % \
+                (pythonwifi.flags.IW_ESSID_MAX_SIZE, ))
+    except Exception as detail:
         # Unexpected errors
-        print detail
+        print(detail)
 
 def setMode(wifi, mode):
     """ Set the mode on the NIC. """
     try:
         wifi.setMode(mode)
-    except ValueError, detail:
-        print "Error for wireless request \"Set Mode\" (%X) :" % \
-                (pythonwifi.flags.SIOCSIWMODE, )
-        print "    invalid argument \"%s\"." % (mode, )
-    except IOError, (error_num, error_str):
-        print "Error for wireless request \"Set Mode\" (%X) :" % \
-                (pythonwifi.flags.SIOCSIWMODE, )
-        print "    SET failed on device %s ; %s." % (wifi.ifname, error_str)
-    except Exception, detail:
+    except ValueError as detail:
+        print("Error for wireless request \"Set Mode\" (%X) :" % \
+                (pythonwifi.flags.SIOCSIWMODE, ))
+        print("    invalid argument \"%s\"." % (mode, ))
+    except IOError (error_num, error_str):
+        print("Error for wireless request \"Set Mode\" (%X) :" % \
+                (pythonwifi.flags.SIOCSIWMODE, ))
+        print("    SET failed on device %s ; %s." % (wifi.ifname, error_str))
+    except Exception as detail:
         # Unexpected errors
-        print type(detail), detail
+        print(type(detail), detail)
 
 def setFreq(wifi, freq):
     """ Set the frequency on the NIC. """
     try:
         wifi.setFrequency(freq)
-    except Exception, detail:
+    except Exception as detail:
         # Unexpected errors
-        print type(detail), detail
+        print(type(detail), detail)
 
 def setKey(wifi, key):
     """ Set a WEP key on the NIC. """
     try:
         wifi.setKey(key)
-    except Exception, detail:
+    except Exception as detail:
         # Unexpected errors
-        print type(detail), detail
+        print(type(detail), detail)
 
 def setAP(wifi, ap):
     """ Set the AP with which to associate. """
     try:
         wifi.setAPaddr(ap)
-    except Exception, detail:
+    except Exception as detail:
         # Unexpected errors
-        print type(detail), detail
+        print(type(detail), detail)
 
 def usage():
     """ Print info about using iwconfig.py. """
-    print """Usage: iwconfig.py [interface]
+    print("""Usage: iwconfig.py [interface]
                 interface essid {NNN|any|on|off}
                 interface mode {managed|ad-hoc|master|...}
                 interface freq N.NNN[k|M|G]
@@ -394,7 +394,7 @@ def usage():
                 interface frag {N|auto|fixed|off}
                 interface modulation {11g|11a|CCK|OFDMg|...}
                 interface commit 
-       Check man pages for more details."""
+       Check man pages for more details.""")
 
 def version_info():
     """ Print version info for iwconfig.py, Wireless Extensions compatibility,
@@ -443,7 +443,7 @@ def get_matching_command(option):
 def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hv", ["help", "version"])
-    except getopt.GetoptError, error_str:
+    except getopt.GetoptError as error_str:
         # invalid options will be taken to be interface name
         pass
     else:
@@ -476,8 +476,8 @@ def main():
                             wifi = Wireless(ifname)
                             set_command(wifi, sys.argv[3])
                         else:
-                            print "iwconfig.py: unknown command `%s' " \
-                                "(check 'iwconfig.py --help')." % (option, )
+                            print("iwconfig.py: unknown command `%s' " \
+                                "(check 'iwconfig.py --help')." % (option, ))
 
 
 if __name__ == "__main__":
